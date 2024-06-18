@@ -1,4 +1,3 @@
-
 import { getStorefrontApiUrl, privateHeaders } from "@/lib/client";
 import { FEATURED_COLLECTION_QUERY } from "@/lib/query";
 import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
