@@ -1,7 +1,9 @@
 import { getStorefrontApiUrl, privateHeaders } from "@/lib/client";
 import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
+import ProductDetail from "@/components/ProductDetail";
 
 export default async function Page({params} : {params: {handle: string}}){
+    
     const product_query = `
     query getProductByHandle {
         product(handle: "${params.handle}") {
@@ -15,11 +17,31 @@ export default async function Page({params} : {params: {handle: string}}){
                 id
                 title
                 quantityAvailable
-                price {
-                  amount
-                  currencyCode
+                selectedOptions{
+                  value
+                  name
                 }
               }
+            }
+          }
+          priceRange{
+            maxVariantPrice{
+              amount
+              currencyCode
+            }
+            minVariantPrice{
+              amount
+              currencyCode
+            }
+          }
+          compareAtPriceRange{
+            maxVariantPrice{
+              amount
+              currencyCode
+            }
+            minVariantPrice{
+              amount
+              currencyCode
             }
           }
         }
@@ -42,21 +64,7 @@ export default async function Page({params} : {params: {handle: string}}){
 
     return (
         <main className="flex min-h-screen flex-col">
-            <div>
-                Product Information Below.
-            </div>
-            <div>
-               {data.product.title}
-               <br/>
-               {data.product.description}
-               <br/>
-               {data.product.variants.edges[0].node.title}
-               <br/>
-               {data.product.variants.edges[0].node.price.amount} - {data.product.variants.edges[0].node.price.currencyCode}
-               <br/>
-               {data.product.variants.edges[0].node.quantityAvailable ? data.product.variants.edges[0].node.quantityAvailable : "Out of Stock"} 
-               <br/>
-            </div>
+            <ProductDetail product={data.product} />
         </main>
     )
 }

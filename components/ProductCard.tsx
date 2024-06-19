@@ -9,7 +9,7 @@ export default function ProductCard({data} : {data: Product}){
         <div className="group relative">
             <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden group-hover:opacity-75 lg:aspect-w-7 lg:aspect-h-8">
                 <Image 
-                    src={featuredImage[0] ? featuredImage[0].url : "https://placehold.co/400x400"}
+                    src={featuredImage[0] ? featuredImage[0].url : "https://dummyimage.com/400x400.png&text=Image+Coming+Soon"}
                     alt={data.title}
                     width={400}
                     height={400}

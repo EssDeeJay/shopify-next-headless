@@ -1,7 +1,8 @@
+
 import { getStorefrontApiUrl, privateHeaders } from "@/lib/client";
 import { FEATURED_COLLECTION_QUERY } from "@/lib/query";
 import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
-import ProductCard from "./components/ProductCard";
+import ProductCard from "../components/ProductCard";
 import { flattenConnection } from "@shopify/hydrogen-react";
 
 export default async function Page() {
@@ -20,10 +21,6 @@ export default async function Page() {
 
   const { data : featuredCollection } = await featuredCollectionProducts.json();
 
-  const featuredProducts = featuredCollection.collection.products.edges.map(
-    (edge: { node: Product }) => edge.node
-  );
-
   const flattenedProducts = flattenConnection(featuredCollection.collection.products) as Product[];
 
   return (
@@ -34,7 +31,7 @@ export default async function Page() {
             <h1 className="text-4xl font-bold">Featured Products</h1>
             <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">             
                 {flattenedProducts.map((product: Product) => (
-                  <ProductCard data={product} />
+                  <ProductCard data={product} key={product.id} />
                 ))}     
             </div>
           </div>

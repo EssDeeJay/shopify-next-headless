@@ -8,7 +8,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "placehold.co",
+        hostname: "dummyimage.com",
       },
     ],
   }
