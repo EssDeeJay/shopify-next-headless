@@ -1,10 +1,14 @@
 import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
 import Image from "next/image";
-import { flattenConnection } from "@shopify/hydrogen-react";
+import { flattenConnection, useMoney } from "@shopify/hydrogen-react";
+import formatMoney from "@/utilities/formatMoney";
 
 export default function ProductCard({data} : {data: Product}){
     // code to display the product card with the image and title
     const featuredImage = flattenConnection(data.images);
+
+    const money = useMoney({amount: data.priceRange.minVariantPrice.amount, currencyCode: data.priceRange.minVariantPrice.currencyCode});
+
     return(
         <div className="group relative">
             <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden group-hover:opacity-75 lg:aspect-w-7 lg:aspect-h-8">
@@ -26,7 +30,7 @@ export default function ProductCard({data} : {data: Product}){
                         {data.title}
                     </a>
                 </h3>
-                
+                <p className="text-sm font-semibold">{money.currencySymbol}{money.amount}</p>
             </div>
         </div>
     )

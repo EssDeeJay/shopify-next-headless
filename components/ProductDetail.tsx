@@ -5,6 +5,8 @@ import { ProductProvider, useCart } from "@shopify/hydrogen-react";
 import AddButton from "./AddButton";
 
 export default function ProductDetail({product} : {product: Product}){
+   const { status, lines } = useCart();
+   console.log(status, lines);
     return(
        <ProductProvider data={product}>
         <div>
@@ -12,7 +14,6 @@ export default function ProductDetail({product} : {product: Product}){
                <br/>
                {product.description}
                <br/>
-               {product.variants.edges[0].node.title}
                <br/>
                <ProductPricing product={product} />
                <br/>
