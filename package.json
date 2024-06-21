@@ -1,6 +1,6 @@
 {
-  "name": "out",
-  "version": "0.1.0",
+  "name": "next-shopify-react-hydrogen",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,7 +11,9 @@
   "dependencies": {
     "@headlessui/react": "^2.0.4",
     "@shopify/hydrogen-react": "^2024.4.4",
+    "lucide-react": "^0.396.0",
     "next": "14.3.0-canary.9",
+    "preline": "^2.3.0",
     "react": "^18",
     "react-dom": "^18"
   },

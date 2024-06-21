@@ -4,6 +4,7 @@ import "./globals.css";
 import Provider from "@/components/common/Provider";
 const inter = Inter({ subsets: ["latin"] });
 import Header from "@/components/common/Header";
+import PrelineScript from "@/components/common/PrelineScript";
 
 export const metadata: Metadata = {
   title: "Greenworks Tools Dev - Headless",
@@ -17,12 +18,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en"> 
+    <Provider>
       <body className={inter.className}>  
-      <Provider>
+      
         <Header />
-            {children}   
+            {children}    
+     
+      </body>   
+      <PrelineScript />  
       </Provider>    
-      </body>    
     </html>
   );
 }

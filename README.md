@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+# Shopify Next.js Headless Storefront - React
+
+Storefront built using own stack, using next.js as a front end framework. Shopify as a backend. This code utilizes storefront API to make the calls to the shopify.
+
 
 ## Getting Started
 
-First, run the development server:
+Get Started by installing the necessary dependencies required to run this project.
+
+```javascript
+npm install 
+```
+Generate .env.local in root folder and include following credentials.
+
+```javascript
+PUBLIC_STORE_DOMAIN = 'YOUR_STORE_DOMAIN'
+PUBLIC_STOREFRONT_API_TOKEN = 'PUBLIC_STOREFRONT_TOKEN'
+PRIVATE_STOREFRONT_API_TOKEN = 'PRIVATE_STOREFRONT_TOKEN'
+```
+To generate tokens, you will need to install headless channel in shopify admin and create a new project and give the necessary permissions to your project and copy the credentials you need.
+
+
+
+
+## Run Locally
+
+Clone the project
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  git clone https://github.com/EssDeeJay/shopify-next-headless.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Go to the project directory
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+  cd my-project
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Install dependencies
 
-## Learn More
+```bash
+  npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the server
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+  npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Dynamic Product & Collection Route
+- Cart Context and Cart Drawer Support that updates instantly
+- Featured Collections on homepage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+I will be updating more features regularly as i make the progress. Please feel free to share feedback. The project currently is barebones and UI and components are not yet styled.
+
+
+## Tech Stack
+
+React, Next.js, TailwindCSS, @headlessui/react, Shopify, @shopify/hydrogen-react
+

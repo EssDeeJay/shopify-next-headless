@@ -54,6 +54,16 @@ query {
               currencyCode
             }
           }
+          compareAtPriceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+            maxVariantPrice {
+              amount
+              currencyCode
+            }
+          }
         }
       }
     }
