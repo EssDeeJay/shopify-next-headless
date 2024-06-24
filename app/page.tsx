@@ -48,7 +48,6 @@ export default function Page() {
     <main className="flex min-h-screen flex-col">
       <div className="flex-1 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl lg:max-w-screen-2xl">
-        <div className="m-1 hs-dropdown [--trigger:hover] relative inline-flex">
           <div className="py-12">
             <h1 className="text-4xl font-bold">Featured Products</h1>
             <div className="mt-6 grid grid-cols-2 gap-y-10 gap-x-6 lg:grid-cols-4 xl:gap-x-8">             
@@ -57,7 +56,7 @@ export default function Page() {
                 ))}     
             </div>
           </div>
-        </div>
+        
         </div>
       </div>
     </main>
