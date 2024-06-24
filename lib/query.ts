@@ -1,31 +1,11 @@
-export const SHOP_QUERY = `
-query {
-  shop {
-    name
-    id
-  }
-}`;
-
-export const PRODUCT_QUERY = `
- query{
-    products(first: 10){
-        edges{
-            node{
-                id
-                title
-                handle
-            }
-        }
-    }
- }
-`;
+// common queries we use on the storefront to fetch the data we need;
 
 export const FEATURED_COLLECTION_QUERY = `
 query {
   collection(handle: "lawn-mowers-1"){
     id
     title
-    products(first: 100, sortKey: BEST_SELLING) {
+    products(first: 12, sortKey: BEST_SELLING) {
       edges {
         node {
           id

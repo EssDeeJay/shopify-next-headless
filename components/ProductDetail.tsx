@@ -1,12 +1,21 @@
 "use client";
 import { ProductPricing } from "./ProductPricing";
 import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
-import { ProductProvider, useCart } from "@shopify/hydrogen-react";
+import { ProductProvider, flattenConnection } from "@shopify/hydrogen-react";
 import AddButton from "./AddButton";
+import type { Media } from "@shopify/hydrogen-react/storefront-api-types";
+import Image from "next/image";
+
+interface ProductMedia extends Media {
+   image: {
+      url: string;
+   };
+}
 
 export default function ProductDetail({product} : {product: Product}){
-   const { status, lines } = useCart();
-   console.log(status, lines);
+  const media = flattenConnection(product.media) as ProductMedia[];
+  const mediaImages = media.map((media: ProductMedia) => media.image.url);
+
     return(
        <ProductProvider data={product}>
         <div>
@@ -20,6 +29,10 @@ export default function ProductDetail({product} : {product: Product}){
               Quantity - {product.variants.edges[0].node.quantityAvailable ? product.variants.edges[0].node.quantityAvailable : "Out of Stock"} 
                <br/>
                <AddButton product={product} />
+
+               {mediaImages.map((image, index) => (
+                  <Image key={index} src={image} alt={product.title} height={800} width={800} className="" loading={index && index === 0 ? "eager" : "lazy"} />
+               ))}
         </div>
       </ProductProvider>   
     )

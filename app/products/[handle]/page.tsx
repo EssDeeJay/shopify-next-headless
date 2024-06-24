@@ -51,8 +51,30 @@ useEffect(() => {
                                     currencyCode
                                 }
                             }
+                            media(first: 15){
+                                edges{
+                                  node{
+                                    mediaContentType
+                                    alt
+                                    ...mediaFieldsByType
+                                  }
+                                }
+                            }
                         }
                     }
+
+                    fragment mediaFieldsByType on Media {
+                        ... on ExternalVideo {
+                          id
+                          host
+                          originUrl
+                        }
+                        ... on MediaImage{
+                          image{
+                            url
+                          }
+                        }
+                      }
                 `;
 
                 try {

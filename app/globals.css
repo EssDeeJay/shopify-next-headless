@@ -1,4 +1,20 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
+
+#product-carousel::-webkit-scrollbar {
+  width: 8px; /* Horizontal scrollbar height */
+  height: 8px; /* Vertical scrollbar width */
+  margin-top: 1em;
+}
+
+#product-carousel::-webkit-scrollbar-thumb {
+  background-color: #82bc00; /* Scrollbar thumb color */
+  border-radius: 50px;
+}
+
+#product-carousel::-webkit-scrollbar-track {
+  background: #e5e7eb; /* Scrollbar track color */
+  border-radius: 50px;
+}
   
