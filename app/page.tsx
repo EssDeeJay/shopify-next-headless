@@ -2,9 +2,7 @@
 import React, { useState , useEffect} from "react";
 import { FEATURED_COLLECTION_QUERY } from "@/lib/query";
 import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
-import ProductCard from "../components/ProductCard";
 import { flattenConnection, useShop } from "@shopify/hydrogen-react";
-import Link from "next/link";
 import ProductCarousel from "@/components/ProductCarousel";
 
 export default function Page() {
@@ -51,22 +49,7 @@ export default function Page() {
       <div className="flex-1 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl lg:max-w-screen-2xl">
           <div className="py-12">
-            <div className="flex items-center justify-between">
-              <h1 className="text-4xl font-bold">Featured Products</h1>
-              <Link href={`/collections/lawn-mowers-1`} className="underline text-primary font-bold">
-                 View All
-              </Link>
-            </div>
-            
-            <div className="mt-6 grid grid-cols-2 gap-y-10 gap-x-6 lg:grid-cols-4 xl:gap-x-8">             
-                {products.map((product: Product) => (
-                  <ProductCard data={product} key={product.id} />
-                ))}     
-            </div>
-          </div>
-
-          <div className="py-12">
-             <ProductCarousel products={products} />
+            <ProductCarousel products={products} carouselTitle="Featured Products" carouselLink="/collections/lawn-mowers-1" />
           </div>
         
         </div>
