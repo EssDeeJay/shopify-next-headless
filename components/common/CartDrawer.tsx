@@ -35,7 +35,7 @@ export default function CartDrawer({ open, onClose, children }: CartDrawerProps)
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="w-screen max-w-md transform text-left align-middle shadow-xl transition-all bg-white">
+                <Dialog.Panel className="w-screen max-w-lg transform text-left align-middle shadow-xl transition-all bg-white">
                   <header className="sticky top-0 flex items-center justify-between px-4 h-16 sm:px-6 bg-white">
                     <h2 id="cart-contents" className="text-lg font-bold">
                       Your cart

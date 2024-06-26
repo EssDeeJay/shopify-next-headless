@@ -54,7 +54,7 @@ export default function ProductCarousel({products, carouselTitle, carouselLink} 
             >
                  {
                    products.map((product) => (
-                    <div key={product.id} className="snap-center shrink-0 w-1/2 lg:w-1/4 inline-block px-4">
+                    <div key={product.id} className="snap-center shrink-0 w-1/2 lg:w-1/3 xl:w-1/4 inline-block px-4">
                       <ProductCard data={product} />
                     </div>
                    ))

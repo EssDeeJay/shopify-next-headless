@@ -6,6 +6,28 @@ import CartDrawerDetail from "./CartDrawerDetail";
 import Image from "next/image";
 import { ShoppingBag, AlignJustify, User, Search, ChevronDown } from "lucide-react";
 import { main_navigation } from "@/lib/constants";
+import React from "react";
+
+interface NavItem {
+  label: string;
+  href: string;
+  hasChildren: boolean;
+  children?: SubNavItem[];
+}
+
+interface SubNavItem {
+  label: string;
+  href: string;
+  hasSubchildren: boolean;
+  subchildren?: SubNavItemDetail[];
+  image?: string;  // Optional since not all sub-nav items have images
+}
+
+interface SubNavItemDetail {
+  label: string;
+  href: string;
+  image: string;
+}
 
 export default function Header() {
   const { isOpen, openDrawer, closeDrawer } = useDrawer();
@@ -54,10 +76,14 @@ export default function Header() {
       </header>
 
       <div className="hidden lg:block">
-         <nav className="flex justify-center items-center py-2" aria-label="primary">
-           <ul className="flex items-center gap-x-8 font-bold">
+         <nav className="flex justify-center items-center py-2 max-w-7xl xl:max-w-screen-2xl w-full relative mx-auto" aria-label="primary">
+           <ul className="flex justify-between items-center" aria-label="primary">
               {/* load data from main_avigation */}
-              
+              <div className="flex items-center w-full gap-x-8 hs-collapse">
+                        {main_navigation.map((navItem) => (
+                            <NavItem key={navItem.label} item={navItem} />
+                        ))}
+              </div>
            </ul>
          </nav>
       </div>
@@ -120,13 +146,61 @@ function IconBag() {
 }
 
 function CartBadge() {
-  const { lines } = useCart();
+  const { totalQuantity, status } = useCart();
 
   return (
     <div
       className={`text-white bg-secondary absolute bottom-1 right-1 text-[0.625rem] font-medium subpixel-antialiased h-3 min-w-[0.75rem] flex items-center justify-center leading-none text-center rounded-full w-auto px-[0.125rem] pb-px`}
     >
-      <span>{lines ? lines.length : 0}</span>
+      <span>{status && status === "idle" ? totalQuantity : ""}</span>
     </div>
   );
+}
+
+const NavItem: React.FC<{ item: NavItem }> = ({ item }) => {
+  return (
+      <div className="flex-grow z-40 hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover]">
+        {item.hasChildren ? (<button className=" text-base xl:text-lg font-bold text-white hover:border-b-2 hover:border-white py-2 inline-flex items-center gap-x-2" aria-label="Mega menu dropdown link">
+                              {item.label}
+                              <span><ChevronDown strokeWidth={1.5} size={24} className="w-4 h-4" /></span>
+                             </button>) 
+                             : 
+                      (<Link href={item.href} className="text-base xl:text-lg font-bold text-white hover:border-b-2 hover:border-white py-2">
+                        {item.label}
+                       </Link>)
+          }
+          
+          {item.hasChildren && (
+              <div className="hs-dropdown-menu transition-[opacity,margin] sm:border duration-[0.1ms] sm:duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 w-full hidden z-10 sm:mt-12 top-full start-0 min-w-60 bg-primary shadow-md rounded-lg py-2 sm:px-2 before:absolute">
+                  <div className="p-4 grid grid-cols-4 gap-8">
+                      {item.children?.map(subItem => (
+                          <SubNavItem key={subItem.label} item={subItem} />
+                      ))}
+                  </div>
+              </div>
+          )}
+      </div>
+  );
+};
+
+const SubNavItem: React.FC<{item: SubNavItem}> = ({item}) => {
+   return(
+    <div className="space-y-2">
+      <Link href={item.href} className="text-lg font-extrabold">
+          {item.label}
+      </Link>
+            {item.hasSubchildren && (
+                <div className="grid grid-cols-2 gap-2">
+                    {item.subchildren?.map(detail => (
+                        <div key={detail.label} className="text-xs">
+                            <Link href={detail.href} className="text-center">
+                                    <img src={detail.image} alt={detail.label} className="w-48 h-auto object-cover"/>
+                                    <p>{detail.label}</p>
+                            </Link>
+                        </div>
+                    ))}
+                </div>
+            )}
+    </div>
+   )
 }

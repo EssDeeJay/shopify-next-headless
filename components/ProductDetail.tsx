@@ -31,7 +31,7 @@ export default function ProductDetail({product} : {product: Product}){
                <AddButton product={product} />
 
                {mediaImages.map((image, index) => (
-                  <Image key={index} src={image} alt={product.title} height={800} width={800} className="" loading={index && index === 0 ? "eager" : "lazy"} />
+                  <Image key={index} src={image} alt={product.title} height={800} width={800} className="" priority={index && index === 0 ? true : false} placeholder="blur" blurDataURL={image} />
                ))}
         </div>
       </ProductProvider>   
