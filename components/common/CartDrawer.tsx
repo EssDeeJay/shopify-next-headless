@@ -35,16 +35,16 @@ export default function CartDrawer({ open, onClose, children }: CartDrawerProps)
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="w-screen max-w-lg transform text-left align-middle shadow-xl transition-all bg-white">
-                  <header className="sticky top-0 flex items-center justify-between px-4 h-16 sm:px-6 bg-white">
-                    <h2 id="cart-contents" className="text-lg font-bold">
+                <Dialog.Panel className="w-screen max-w-lg transform text-left align-middle shadow-xl transition-all bg-white rounded-l-2xl">
+                  <header className="sticky top-0 flex items-center justify-between px-4 h-20 sm:px-6 bg-white border-b border-gray-200 rounded-tl-2xl">
+                    <h2 id="cart-contents" className="text-2xl font-extrabold">
                       Your cart
                     </h2>
-                    <button type="button" className="p-2 text-black" onClick={onClose}>
+                    <button type="button" className="p-2 text-gray-500" onClick={onClose}>
                       <IconClose aria-label="Close panel" />
                     </button>
                   </header>
-                  <div className="relative">
+                  <div className="relative my-2">
                     {children}
                   </div>
                 </Dialog.Panel>

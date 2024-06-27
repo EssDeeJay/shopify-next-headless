@@ -23,6 +23,7 @@ useEffect(() => {
                                     node {
                                         id
                                         title
+                                        sku
                                         quantityAvailable
                                         selectedOptions {
                                             value
@@ -51,7 +52,7 @@ useEffect(() => {
                                     currencyCode
                                 }
                             }
-                            media(first: 15){
+                            media(first: 20){
                                 edges{
                                   node{
                                     mediaContentType
@@ -59,6 +60,10 @@ useEffect(() => {
                                     ...mediaFieldsByType
                                   }
                                 }
+                            }
+                            keyFeatures: metafield(namespace: "custom", key: "key_features"){
+                                value
+                                type
                             }
                         }
                     }

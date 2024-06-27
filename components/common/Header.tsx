@@ -36,7 +36,7 @@ export default function Header() {
     <div className={`bg-primary text-white px-4 md:px-6 lg:px-8`}>
       <header
         role="banner"
-        className={`flex items-center justify-between  gap-4  max-w-7xl lg:max-w-screen-2xl mx-auto h-16 py-6 md:py-8 lg:py-12 sticky z-40 top-0 w-full leading-none antialiased transition`}
+        className={`flex items-center justify-between  gap-4  max-w-7xl lg:max-w-screen-2xl mx-auto h-8 py-6 md:py-8 lg:py-12 sticky z-40 top-0 w-full leading-none antialiased transition`}
       >
         <div className="flex lg:hidden">
           <button type="button" className="py-3 px-4 inline-flex items-center gap-x-2 text-sm text-white lg:hidden" data-hs-overlay="#mobile-menu">
