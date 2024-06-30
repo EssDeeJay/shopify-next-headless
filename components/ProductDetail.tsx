@@ -1,10 +1,10 @@
 "use client";
 import { ProductPricing } from "./ProductPricing";
-import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
+import type { Product, Media } from "@shopify/hydrogen-react/storefront-api-types";
 import { ProductProvider, flattenConnection } from "@shopify/hydrogen-react";
 import AddButton from "./AddButton";
-import type { Media } from "@shopify/hydrogen-react/storefront-api-types";
 import Image from "next/image";
+import PrelineAccordion from "./PrelineAccordion";
 
 interface ProductMedia extends Media {
    image: {
@@ -12,11 +12,27 @@ interface ProductMedia extends Media {
    };
 }
 
-export default function ProductDetail({ product }: { product: Product }) {
-   const media = flattenConnection(product.media) as ProductMedia[];
-   const mediaImages = media.map((media: ProductMedia) => media.image.url);
+interface ExtendedProduct extends Product{
+   keyFeatures: {
+      references: {
+         nodes: KeyFeature[];
+      };
+   };
+}
 
-   console.log(product)
+interface KeyFeature {
+   id: string;
+   field: {
+       value: string; // JSON string
+   };
+}
+
+export default function ProductDetail({ product }: { product: ExtendedProduct }) {
+   if (!product) return null;
+
+   const media = flattenConnection(product?.media) as ProductMedia[];
+   const mediaImages = media.map((media: ProductMedia) => media.image.url);
+   const keyFeatures = product.keyFeatures?.references?.nodes.map((node: KeyFeature) => JSON.parse(node.field.value));
 
    return (
       <ProductProvider data={product}>
@@ -65,12 +81,19 @@ export default function ProductDetail({ product }: { product: Product }) {
                      </div>
                   </div>
 
-                  <div className="mt-6">
-                     <h3 className="sr-only">Product Description</h3>
-                     <p className="text-base text-gray-700">
-                        {product.description}
-                     </p>
+                 {keyFeatures &&  
+                   <div className="mt-6">
+                     <h3 className="text-xl font-semibold mb-4">Key Features</h3>
+                            <ul className="space-y-2">
+                                {keyFeatures && keyFeatures.map((feature, index) => (
+                                    <li key={index} className="text-base text-gray-700 before:content-['\2713'] before:mr-2 before:text-primary">
+                                        {feature.type === "root" ? feature.children[0].children[0].value : ""}
+                                    </li>
+                                ))}
+                            </ul>
                   </div>
+                  }
+                 
 
                   <div className="mt-6">
                   <hr className="w-full border-b border-gray-300" />
@@ -81,12 +104,14 @@ export default function ProductDetail({ product }: { product: Product }) {
                      </div>
                      <hr className="w-full border-b border-gray-300" />
                   </div>
+
+                  <div className="mt-6">
+                    
+                     <PrelineAccordion />
+                  </div>
+                 
                </div>
             </div>
-
-            <br />
-            Quantity - {product.variants.edges[0].node.quantityAvailable ? product.variants.edges[0].node.quantityAvailable : "Out of Stock"}
-            <br />
             
 
 

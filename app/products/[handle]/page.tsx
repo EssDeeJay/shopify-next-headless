@@ -62,8 +62,20 @@ useEffect(() => {
                                 }
                             }
                             keyFeatures: metafield(namespace: "custom", key: "key_features"){
-                                value
                                 type
+                                references(first: 15){
+                                  nodes{
+                                    ...on Metaobject{
+                                      id
+                                      field(key:"feature_name"){
+                                        value
+                                      }
+                                    }
+                                  }
+                                }
+                            }
+                            specifications: metafield(namespace: "custom", key: "specifications"){
+                                value
                             }
                         }
                     }
@@ -95,6 +107,12 @@ useEffect(() => {
 
                     const { data }: { data: { product: Product } } = await response.json();
                     setProduct(data.product);
+
+                    const loadPreline = async () => {
+                        await import("preline/preline");
+                        window.HSStaticMethods.autoInit();
+                      };
+                      loadPreline();
                 } catch (error) {
                     console.error("Failed to fetch product:", error);
                 }
@@ -102,15 +120,15 @@ useEffect(() => {
 
             fetchProduct();
         }
-    }, [params.handle]); // Dependency array includes handle to re-fetch if it changes
+    }, [params.handle]);
 
-    if (!product) {
-        return <div>Loading...</div>;
+    if(!product){
+        return <div>Loading...</div>   
     }
 
-    return (
-        <main className="flex min-h-screen flex-col">
+    return (  
+         <main className="flex min-h-screen flex-col">
             <ProductDetail product={product} />
-        </main>
+         </main>
     )
 }
