@@ -107,7 +107,7 @@ export default function ProductDetail({ product }: { product: ExtendedProduct })
 
                   <div className="mt-6">
                     
-                     <PrelineAccordion />
+                     <PrelineAccordion product={product} />
                   </div>
                  
                </div>
