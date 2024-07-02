@@ -77,6 +77,18 @@ useEffect(() => {
                             specifications: metafield(namespace: "custom", key: "specifications"){
                                 value
                             }
+                            manuals: metafield(namespace: "custom", key: "manuals"){
+                                references(first: 10){
+                                    nodes{
+                                        ...on GenericFile{
+                                            url
+                                        }
+                                    }
+                                }
+                            }
+                            includes: metafield(namespace: "custom", key: "includes"){
+                                value
+                            }
                         }
                     }
 
