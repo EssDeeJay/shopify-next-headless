@@ -55,8 +55,10 @@ Start the server
 - Dynamic Product & Collection Route
 - Cart Context and Cart Drawer Support that updates instantly
 - Featured Collections on homepage
+- Preline Product Page Accordions [Dynamic Product Accordions includes Specifications, Instructions Manuals, etc.]
+- Product Page Key Features
 
-I will be updating more features regularly as i make the progress. Please feel free to share feedback. The project currently is barebones and UI and components are not yet styled.
+I will be updating more features regularly as i make the progress. Please feel free to share feedback. The project currently is under development. Things like product page detail component can be diffferent per project. Feel free to contribute.
 
 
 ## Tech Stack
