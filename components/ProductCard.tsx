@@ -6,10 +6,16 @@ import formatMoney from "@/utilities/formatMoney";
 export default function ProductCard({data} : {data: Product}){
     // code to display the product card with the image and title
     const featuredImage = flattenConnection(data.images);
+    const soldOut = data.availableForSale === false;
     
 
     return(
         <div className="group relative">
+            {soldOut && 
+              <div className="z-10 absolute top-0 left-0 bg-black opacity-75 flex items-center justify-center text-white font-semibold text-sm py-1 px-2">
+                Sold Out
+              </div>
+            }
             <div className="w-full flex aspect-square bg-gray-50 rounded-lg overflow-hidden group-hover:opacity-75">
                 <Image 
                     src={featuredImage[0] ? featuredImage[0].url : "https://dummyimage.com/400x400.png&text=Image+Coming+Soon"}

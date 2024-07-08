@@ -14,6 +14,8 @@ export default function AddButton({product}: {product: Product}){
     const handleDecrement = () => {
         setQuantity((prevQuantity) => Math.max(1, prevQuantity - 1)); // Prevents the quantity from going below 1
     };
+
+    const soldOut = product.availableForSale === false;
     
     return( 
          <form className="flex w-full items-center justify-start">
@@ -31,8 +33,8 @@ export default function AddButton({product}: {product: Product}){
              </div>
             </div>
             <div className="flex-[1_1_65%]">
-             <AddToCartButton variantId={product.variants.edges[0].node.id} quantity={quantity} type="button" className="bg-primary hover:bg-secondary text-white font-medium py-3 px-8 rounded flex max-w-xs flex-1 items-center justify-center sm:w-full" disabled={product.variants.edges[0].node.quantityAvailable ? false : true}>
-                {product.variants.edges[0].node.quantityAvailable ? "Add to cart" : "Sold Out"}
+             <AddToCartButton variantId={product.variants.edges[0].node.id} quantity={quantity} type="button" className={`bg-primary hover:bg-secondary text-white font-medium py-3 px-8 rounded flex max-w-xs flex-1 items-center justify-center sm:w-full ${soldOut ? "opacity-50 cursor-not-allowed" : "" }`} disabled={soldOut ? true : false}>
+                { soldOut ? "Sold Out" : "Add to Cart"}
              </AddToCartButton>
             </div>
             

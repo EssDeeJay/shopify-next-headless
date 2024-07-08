@@ -17,6 +17,7 @@ useEffect(() => {
                             id
                             title
                             description
+                            availableForSale
                             variants(first: 3) {
                                 edges {
                                     cursor
