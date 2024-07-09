@@ -11,7 +11,9 @@ interface FileNames{
   fileName: string;
 }
 
-export default function PrelineAccordion({ product, specifications, manuals, included }: { product: Product, specifications: Specifications[], manuals: FileNames[], included: Array<string> }) {
+type Product = typeof Product;
+
+export default function PrelineAccordion({ product, specifications, manuals, included }: { product: Product, specifications?: Specifications[], manuals?: FileNames[], included: Array<string> }) {
   return (
     <div className="hs-accordion-group">
       {product.description &&       
