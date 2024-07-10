@@ -1,5 +1,5 @@
 "use client";
-import {ProductPrice } from '@shopify/hydrogen-react';
+import { ProductPrice } from '@shopify/hydrogen-react';
 import type {Product} from '@shopify/hydrogen-react/storefront-api-types';
 
 export function ProductPricing({product}: {product: Product}) {

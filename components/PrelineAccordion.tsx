@@ -1,4 +1,4 @@
-import type Product from "@shopify/hydrogen-react/storefront-api-types";
+import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
 import Link from "next/link";
 
 interface Specifications {
@@ -10,8 +10,6 @@ interface FileNames{
   url: URL;
   fileName: string;
 }
-
-type Product = typeof Product;
 
 export default function PrelineAccordion({ product, specifications, manuals, included }: { product: Product, specifications?: Specifications[], manuals?: FileNames[], included: Array<string> }) {
   return (
@@ -132,9 +130,7 @@ export default function PrelineAccordion({ product, specifications, manuals, inc
           </div>
         </div>
       </div>
-      }
-
-      
+      } 
 
       {included &&  <div
         className="hs-accordion hs-accordion-active:border-gray-200 bg-white border border-transparent rounded-xl"

@@ -1,12 +1,13 @@
 "use client";
 import CartDrawer, { useDrawer } from "./CartDrawer";
-import { useCart } from "@shopify/hydrogen-react";
+import { useCart, useShop } from "@shopify/hydrogen-react";
 import Link from "next/link";
 import CartDrawerDetail from "./CartDrawerDetail";
 import Image from "next/image";
 import { ShoppingBag, AlignJustify, User, Search, ChevronDown } from "lucide-react";
 import { main_navigation } from "@/lib/constants";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { ProductPricing } from "../ProductPricing";
 
 interface NavItem {
   label: string;
@@ -30,7 +31,106 @@ interface SubNavItemDetail {
 }
 
 export default function Header() {
+  const shop = useShop();
   const { isOpen, openDrawer, closeDrawer } = useDrawer();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState(null);
+  const [loading, setIsLoading] = useState(false);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  const closeDropdown = () => {
+    setDropdownOpen(false);
+    setSearchQuery('');
+};
+
+  useEffect(() => {
+       const tiemOutId = setTimeout(() => {
+        if(searchQuery){
+          setIsLoading(true);
+          console.log( 'make fetch request with the query :', searchQuery);
+
+          const fetchSearchResults = async () => {
+              const search_query = `
+                 query PredictiveSearch {
+                    predictiveSearch(query: "${searchQuery}") {
+                      queries{
+                        text
+                      }
+                      collections{
+                        id
+                        title
+                        handle
+                      }
+                      products{
+                        id
+                        title
+                        handle
+                        images(first: 1){
+                          nodes{
+                            id
+                            url
+                          }
+                        }
+                        priceRange{
+                          minVariantPrice{
+                            amount
+                            currencyCode
+                          }
+                        }
+                        compareAtPriceRange{
+                          maxVariantPrice{
+                            amount
+                            currencyCode
+                          }
+                          minVariantPrice{
+                            amount
+                            currencyCode
+                          }
+                        }
+                      }
+                      articles{
+                        id
+                        title
+                        handle
+                      }
+                      pages{
+                        id
+                        title
+                        handle
+                      }
+                    }
+                 }
+              `;
+
+              try{
+                const response = await fetch(shop.getStorefrontApiUrl(), {
+                  method: "POST",
+                  headers: shop.getPublicTokenHeaders({ contentType: "json" }),
+                  body: JSON.stringify({ query: search_query })
+              });
+
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.statusText}`);
+              }
+
+              const { data } = await response.json();
+               setSearchResults(data.predictiveSearch);
+               setIsLoading(false);
+               setDropdownOpen(true);       
+               console.log(data.predictiveSearch)
+              }catch(error){
+                console.error("Failed to fetch search results:", error);
+              }
+          }
+
+          fetchSearchResults();
+        }else{
+          setSearchResults(null);
+        }    
+       }, 1000);
+
+       return () => clearTimeout(tiemOutId);
+  }, [searchQuery])
 
   return (
     <div className={`bg-primary text-white px-4 md:px-6 lg:px-8`}>
@@ -55,6 +155,88 @@ export default function Header() {
             />
 
           </Link>
+        </div>
+
+        <div className="hidden lg:inline-flex lg:flex-1 lg:items-center lg:justify-center">
+          {/* search bar for desktop screens */}
+          <div
+            id="json-example-with-tab-filter-in-dropdown-tab-preview-markup"
+            className="w-full max-w-3xl"
+          >
+            <div className="max-w-2xl w-full">
+              {/* SearchBox */}
+              <div
+                className="relative"
+              >
+                <div className="relative">
+                  <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none z-90 ps-3.5">
+                    <svg
+                      className="flex-shrink-0 size-4 text-gray-400"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx={11} cy={11} r={8} />
+                      <path d="m21 21-4.3-4.3" />
+                    </svg>
+                  </div>
+                  <input
+                    className="py-3 ps-10 pe-4 block w-full border-gray-200 rounded-lg text-sm focus:border-primary focus:ring-primary disabled:opacity-50 disabled:pointer-events-none text-gray-900"
+                    type="text"
+                    placeholder="Search For Products"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onClick={() => {console.log('search box clicked !!, here we will use prefetch query to fetch data from server')}}
+                  />
+                </div>
+                {/* SearchBox Dropdown */}
+                <div
+                  className={`absolute z-50 w-full bg-white rounded-xl shadow-[0_10px_40px_10px_rgba(0,0,0,0.08)] ${searchResults && isDropdownOpen ? 'block' : 'hidden'}`}
+                >
+                  <div
+                    className="max-h-[300px] p-2 rounded-b-xl overflow-y-auto overflow-hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
+                    id="search-data"
+                  >
+                    {loading ? (
+                       <p>Loading....</p>
+                     
+                    ) : isDropdownOpen && searchResults && (
+                      <ul className="flex flex-col gap text-black">
+                         {searchResults.products && searchResults.products.map(product => (
+                          <li key={product.id} className="p-2 text-black">
+                          <Link href={`/products/${product.handle}`} onClick={closeDropdown}>
+                             <div className="flex items-center gap-x-2">
+                                <Image src={product.images.nodes[0].url} alt={`${product.title}`} width={200} height={200} className="w-16 h-16 object-cover" />
+                                <div>
+                                  <p className="font-bold">{product.title}</p>
+                                  <ProductPricing product={product} />
+                                </div>
+                            </div>
+                          </Link>
+                        </li>
+                         ))}
+                         {searchResults.collections.map(collection => {
+                           <li key={collection.id} className="p-2 text-black">
+                              <Link href={`/collections/${collection.handle}`} onClick={closeDropdown}>
+                                <p className="font-bold">{collection.title}</p>
+                              </Link>
+                           </li>
+                         })}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+                {/* End SearchBox Dropdown */}
+              </div>
+              {/* End SearchBox */}
+            </div>
+          </div>
 
         </div>
 
@@ -69,7 +251,7 @@ export default function Header() {
           <button className="relative flex items-center justify-center w-8 h-8">
             <User size={24} strokeWidth={1.5} className="w-6 h-6" />
           </button>
-          <button className="relative flex items-center justify-center w-8 h-8">
+          <button className="relative flex items-center justify-center w-8 h-8 lg:hidden">
             <Search size={24} strokeWidth={1.5} className="w-6 h-6" />
           </button>
         </div>
@@ -265,7 +447,7 @@ function CartBadge() {
 
 const NavItem: React.FC<{ item: NavItem }> = ({ item }) => {
   return (
-    <div className="flex-grow z-40 hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover]">
+    <div className="flex-grow z-20 hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] sm:[--trigger:hover]">
       {item.hasChildren ? (<button className=" text-base xl:text-lg font-bold text-white hover:border-b-2 hover:border-white py-2 inline-flex items-center gap-x-2" aria-label="Mega menu dropdown link">
         {item.label}
         <span><ChevronDown strokeWidth={1.5} size={24} className="w-4 h-4" /></span>
@@ -277,7 +459,7 @@ const NavItem: React.FC<{ item: NavItem }> = ({ item }) => {
       }
 
       {item.hasChildren && (
-        <div className="hs-dropdown-menu transition-[opacity,margin] sm:border duration-[0.1ms] sm:duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 w-full hidden z-10 sm:mt-12 top-full start-0 min-w-60 bg-primary shadow-md rounded-lg py-2 sm:px-2 before:absolute">
+        <div className="hs-dropdown-menu transition-[opacity,margin] sm:border duration-[0.1ms] sm:duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 w-full hidden z-20 sm:mt-12 top-full start-0 min-w-60 bg-primary shadow-md rounded-lg py-2 sm:px-2 before:absolute">
           <div className="p-4 grid grid-cols-4 gap-8">
             {item.children?.map(subItem => (
               <SubNavItem key={subItem.label} item={subItem} />

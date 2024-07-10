@@ -42,6 +42,10 @@ interface Specifications {
 interface IncludedItems {
    value?: string;
 }
+interface FileNames{
+   url: URL;
+   fileName: string;
+ }
 
 export default function ProductDetail({ product }: { product: ExtendedProduct }) {
    if (!product) return null;
@@ -193,13 +197,10 @@ export default function ProductDetail({ product }: { product: ExtendedProduct })
                   </div>
 
                   <div className="mt-6">
-                     <PrelineAccordion product={product} specifications={specifications} manuals={fileNames} included={includedItems} />
+                     <PrelineAccordion product={product} specifications={specifications as Specifications[]} manuals={fileNames as FileNames[]} included={includedItems} />
                   </div>
-
                </div>
             </div>
-
-
 
          </div>
       </ProductProvider>
