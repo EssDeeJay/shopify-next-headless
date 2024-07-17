@@ -4,9 +4,9 @@ import { useCart, useShop } from "@shopify/hydrogen-react";
 import Link from "next/link";
 import CartDrawerDetail from "./CartDrawerDetail";
 import Image from "next/image";
-import { ShoppingBag, AlignJustify, User, Search, ChevronDown } from "lucide-react";
+import { ShoppingBag, AlignJustify, User, Search, ChevronDown, Unlink2 } from "lucide-react";
 import { main_navigation } from "@/lib/constants";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ProductPricing } from "../ProductPricing";
 
 interface NavItem {
@@ -30,27 +30,75 @@ interface SubNavItemDetail {
   image: string;
 }
 
+interface SearchResult {
+  queries: {
+    text: string;
+  }[];
+  products: {
+    id: string;
+    title: string;
+    handle: string;
+    images: {
+      nodes: {
+        id: string;
+        url: string;
+      }[];
+    };
+    priceRange: {
+      minVariantPrice: {
+        amount: string;
+        currencyCode: string;
+      };
+    };
+    compareAtPriceRange: {
+      maxVariantPrice: {
+        amount: string;
+        currencyCode: string;
+      };
+      minVariantPrice: {
+        amount: string;
+        currencyCode: string;
+      };
+    };  
+  }[];
+  collections: {
+    id: string;
+    title: string;
+    handle: string;
+  }[];
+  articles: {
+    id: string;
+    title: string;
+    handle: string;
+  }[];
+  pages: {
+    id: string;
+    title: string;
+    handle: string;
+  }[];
+}
+
 export default function Header() {
   const shop = useShop();
   const { isOpen, openDrawer, closeDrawer } = useDrawer();
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState(null);
+  const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
   const [loading, setIsLoading] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const searchRef = useRef(null);
 
   const closeDropdown = () => {
     setDropdownOpen(false);
     setSearchQuery('');
-};
+  };
 
   useEffect(() => {
-       const tiemOutId = setTimeout(() => {
-        if(searchQuery){
-          setIsLoading(true);
-          console.log( 'make fetch request with the query :', searchQuery);
+    const tiemOutId = setTimeout(() => {
+      if (searchQuery) {
+        setIsLoading(true);
 
-          const fetchSearchResults = async () => {
-              const search_query = `
+        const fetchSearchResults = async () => {
+          const search_query = `
                  query PredictiveSearch {
                     predictiveSearch(query: "${searchQuery}") {
                       queries{
@@ -102,35 +150,48 @@ export default function Header() {
                  }
               `;
 
-              try{
-                const response = await fetch(shop.getStorefrontApiUrl(), {
-                  method: "POST",
-                  headers: shop.getPublicTokenHeaders({ contentType: "json" }),
-                  body: JSON.stringify({ query: search_query })
-              });
+          try {
+            const response = await fetch(shop.getStorefrontApiUrl(), {
+              method: "POST",
+              headers: shop.getPublicTokenHeaders({ contentType: "json" }),
+              body: JSON.stringify({ query: search_query })
+            });
 
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.statusText}`);
-              }
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.statusText}`);
+            }
 
-              const { data } = await response.json();
-               setSearchResults(data.predictiveSearch);
-               setIsLoading(false);
-               setDropdownOpen(true);       
-               console.log(data.predictiveSearch)
-              }catch(error){
-                console.error("Failed to fetch search results:", error);
-              }
+            const { data } = await response.json();
+            setSearchResults(data.predictiveSearch);
+            setIsLoading(false);
+            setDropdownOpen(true);
+            console.log(data.predictiveSearch)
+          } catch (error) {
+            console.error("Failed to fetch search results:", error);
           }
+        }
 
-          fetchSearchResults();
-        }else{
-          setSearchResults(null);
-        }    
-       }, 1000);
+        fetchSearchResults();
+      } else {
+        setSearchResults(null);
+      }
+    }, 1000);
 
-       return () => clearTimeout(tiemOutId);
-  }, [searchQuery])
+    return () => clearTimeout(tiemOutId);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchRef.current && !(searchRef.current as any).contains(event.target)) {
+        setSearchQuery('');  // Clear the input when clicking outside
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className={`bg-primary text-white px-4 md:px-6 lg:px-8`}>
@@ -168,7 +229,7 @@ export default function Header() {
               <div
                 className="relative"
               >
-                <div className="relative">
+                <div className="relative" ref={searchRef}>
                   <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none z-90 ps-3.5">
                     <svg
                       className="flex-shrink-0 size-4 text-gray-400"
@@ -192,7 +253,7 @@ export default function Header() {
                     placeholder="Search For Products"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    onClick={() => {console.log('search box clicked !!, here we will use prefetch query to fetch data from server')}}
+                    onClick={() => { console.log('search box clicked !!, here we will use prefetch query to fetch data from server') }}
                   />
                 </div>
                 {/* SearchBox Dropdown */}
@@ -204,31 +265,70 @@ export default function Header() {
                     id="search-data"
                   >
                     {loading ? (
-                       <p>Loading....</p>
-                     
+                      <p>Loading....</p>
+
                     ) : isDropdownOpen && searchResults && (
-                      <ul className="flex flex-col gap text-black">
-                         {searchResults.products && searchResults.products.map(product => (
-                          <li key={product.id} className="p-2 text-black">
-                          <Link href={`/products/${product.handle}`} onClick={closeDropdown}>
-                             <div className="flex items-center gap-x-2">
-                                <Image src={product.images.nodes[0].url} alt={`${product.title}`} width={200} height={200} className="w-16 h-16 object-cover" />
-                                <div>
-                                  <p className="font-bold">{product.title}</p>
-                                  <ProductPricing product={product} />
+                      <div className="flex flex-col gap text-black">
+                        {searchResults.products.length > 0 && (
+                          <ul className="flex flex-col gap-2">
+                             <h4 className="text-lg font-semibold">Products</h4>
+                            {searchResults.products.map(product => (
+                            <li key={product.id} className="p-2 text-black">
+                              <Link href={`/products/${product.handle}`} onClick={closeDropdown}>
+                                <div className="flex items-center gap-x-2">
+                                  <Image src={product.images.nodes[0].url} alt={`${product.title}`} width={200} height={200} className="w-16 h-16 object-cover" />
+                                  <div>
+                                    <p className="font-bold">{product.title}</p>
+                                    <p className={product.compareAtPriceRange &&  product.compareAtPriceRange.minVariantPrice.amount !== '0.0' ? 'font-bold text-sm text-gray-500' : 'text-sm text-gray-500'}>{product.priceRange.minVariantPrice.amount} {product.priceRange.minVariantPrice.currencyCode} {" "}
+                                    { product.compareAtPriceRange &&  product.compareAtPriceRange.minVariantPrice.amount !== '0.0' && <span className="line-through inline-block"> {product.compareAtPriceRange.minVariantPrice.amount} {product.compareAtPriceRange.minVariantPrice.currencyCode}</span>}
+                                    </p>
+                                  </div>
                                 </div>
-                            </div>
-                          </Link>
-                        </li>
-                         ))}
-                         {searchResults.collections.map(collection => {
-                           <li key={collection.id} className="p-2 text-black">
-                              <Link href={`/collections/${collection.handle}`} onClick={closeDropdown}>
-                                <p className="font-bold">{collection.title}</p>
                               </Link>
-                           </li>
-                         })}
-                      </ul>
+                            </li>
+                          ))}
+                          </ul> 
+                        )}
+                        {searchResults.collections.length > 0 && (
+                          <ul>
+                            <h4 className="text-lg font-semibold">Collections</h4>
+                            {searchResults.collections.map(collection => (
+                              <li key={collection.id}>
+                                <Link href={`/collections/${collection.handle}`} onClick={closeDropdown}>
+                                  {collection.title}
+                                </Link>
+                              </li>
+
+                            ))}
+                          </ul>
+                        )}
+                        {searchResults.articles.length > 0 && (
+                          <ul>
+                            <h4 className="text-lg font-semibold">Blog Articles</h4>
+                            {searchResults.articles.map(article => (
+                              <li key={article.id}>
+                                <Link href={`/blogs/${article.handle}`} onClick={closeDropdown}>
+                                  {article.title}
+                                </Link>
+                              </li>
+
+                            ))}
+                          </ul>
+                        )}
+                        {searchResults.pages.length > 0 && (
+                          <ul>
+                            <h4 className="text-lg font-semibold">Pages</h4>
+                            {searchResults.pages.map(page => (
+                              <li key={page.id}>
+                                <Link href={`/pages/${page.handle}`} onClick={closeDropdown}>
+                                  {page.title}
+                                </Link>
+                              </li>
+
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
